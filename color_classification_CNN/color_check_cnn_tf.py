@@ -177,7 +177,7 @@ class Commander :
         pre_path = self._modelName + "-" + color_type
         if(withScatter):
             pre_path = pre_path + 'withScatter'
-        pre_path = pre_path + '-'+ str(feature_shape[0]) +'x'+str(feature_shape[1]) + feature_type
+        pre_path = "../../" + pre_path + '-'+ str(feature_shape[0]) +'x'+str(feature_shape[1]) + feature_type
             
         self.checkpoint_state_name = "checkpoint_state"
         self.saved_checkpoint = 'saved_checkpoint'
