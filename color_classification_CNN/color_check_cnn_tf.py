@@ -53,12 +53,12 @@ class Model:
             self.training = tf.placeholder(tf.bool, name="training")
 
             # input place holders
-            self.X = tf.placeholder( tf.float32, [None, self._feature_shape[0],self._feature_shape[1],self._feature_shape[2]], name="input")           
-#            X_img = tf.reshape(self.X, [-1, self._feature_shape[0], self._feature_shape[1], self._feature_shape[2]])
+            self.X = tf.placeholder( tf.float32, [None, self._feature_shape[0]*self._feature_shape[1]*self._feature_shape[2]], name="input")           
+            X_img = tf.reshape(self.X, [-1, self._feature_shape[0], self._feature_shape[1], self._feature_shape[2]])
             self.Y = tf.placeholder(tf.float32, [None, self.lable_size])
             
             # Convolutional Layer #1 and # Pooling Layer #1
-            conv11 = tf.layers.conv2d(inputs=self.X, filters=64, kernel_size=[3,3], 
+            conv11 = tf.layers.conv2d(inputs=X_img, filters=64, kernel_size=[3,3], 
                                      padding="SAME", activation=tf.nn.relu, 
                                      kernel_initializer=tf.contrib.layers.xavier_initializer(),
                                      kernel_regularizer=self.kernel_regularizer)         # (?,60,60,64)
@@ -287,30 +287,33 @@ if __name__ == '__main__':
     mode = int(input("1.training  |  2.accuracy test  |  3.Freeze a model  : "))
     
     dataPath = '../../../color_defect_galaxy/data/train_data'
-    color_type = 'Lab'  #  RGB   /  BGR   /   Lab   /   Gray
+    color_type = 'Gray'  #  RGB   /  BGR   /   Lab   /   Gray
     feature_type = 'block'  #  full   /   block
-    withScatter = True
+    withScatter = False
 
     sample_size = [1000, 300]    
     feature_shape = [32, 32, 3]
     
-    if(feature_type == 'full'):
-        sample_size[0] = feature_shape[0]
-        sample_size[1] = feature_shape[1]
-    
+        
     if( color_type=='Gray'):
         feature_shape[2] = 1
+        feature_type = 'full'
     
     if( withScatter):
         feature_shape[2] = feature_shape[2]+1
+    
+    if(feature_type == 'full'):
+        sample_size[0] = feature_shape[0]
+        sample_size[1] = feature_shape[1]
+        
         
     label_size = 2                  # OK=[1 0] or NG=[0 1]
     learning_rate=1e-4
     
     training_epochs = 200
-    batch_size = 128
+    batch_size = 20
     nExtractPerImg = 50
-    nFakes = 50     # if you don't want to generate fake date, nFakes = 0
+    nFakes = 0     # if you don't want to generate fake date, nFakes = 0
     
     # Pre process
     if(mode==1 or mode==2):        	

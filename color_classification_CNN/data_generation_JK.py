@@ -570,6 +570,9 @@ class Galaxy(object):
         print('test.images.shape : ', self.test.images.shape)
         print('test.labels.shape : ', self.test.labels.shape)
 
+        self.train.images = trainX.reshape(-1, self._feature_shape[0]*self._feature_shape[1]*self._feature_shape[2])        
+        self.test.images = testX.reshape(-1, self._feature_shape[0]*self._feature_shape[1]*self._feature_shape[2])
+        
         trainXList = []
         trainYList = []
         testXList = []
@@ -581,24 +584,25 @@ if __name__ == '__main__':
 
     dataPath = '../../../color_defect_galaxy/data/train_data'
      
-    color_type = 'Lab'  # RGB /  BGR  /  Lab
-    feature_type = 'block'   # full  or  block
+    color_type = 'Gray'  # RGB /  BGR  /  Lab
+    feature_type = 'full'   # full  or  block
     nExtract = 50
-    withScatter = True
+    nFakes = 0
+    withScatter = False
     
     sample_size = [1000, 300]    
-    feature_shape = [32, 32, 4]   
+    feature_shape = [32, 32, 1]   
     
     if(feature_type == 'full'):
         sample_size[0] = feature_shape[0]
         sample_size[1] = feature_shape[1]
         
     galaxy = Galaxy (dataPath, sampleSize=sample_size, feature_shape=feature_shape, color_type=color_type, feature_type=feature_type, nExtract=nExtract, 
-                     withScatter=withScatter, nFakes=5)
+                     withScatter=withScatter, nFakes=nFakes)
     
     batch_size = 5
         
-    for i in range(10):
+    for i in range(1):
         trainX, trainY = galaxy.train.next_batch(batch_size)
         print('trainX.shape : ',trainX.shape)
         print(trainX)
@@ -612,5 +616,5 @@ if __name__ == '__main__':
     print('images.shape : ', images.shape)
     print('labels.shape : ', labels.shape)
 
-    cv2.imshow('test', images[0].reshape( feature_shape[0],feature_shape[1],feature_shape[2]))
+    cv2.imshow('test', images[0].reshape( feature_shape[1], feature_shape[0]))
     cv2.waitKey(0)
