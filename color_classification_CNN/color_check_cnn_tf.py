@@ -69,7 +69,7 @@ class Model:
                                      kernel_regularizer=self.kernel_regularizer)         # (?,60,60,64)
             
             pool1 = tf.layers.max_pooling2d(inputs=conv12, pool_size=[2,2],
-                                            padding="SAME", strides=2)              # (?,14,14,64)  # (?,16,16,64)
+                                            padding="SAME", strides=2)              # (?,14,14,64)  # (?,16,16,64)32
             
             dropout1 = tf.layers.dropout(inputs=pool1, 
                                          rate=0.7, training=self.training)
@@ -91,7 +91,7 @@ class Model:
                                      kernel_regularizer=self.kernel_regularizer)         # (?,15,15,64)
             
             pool2 = tf.layers.max_pooling2d(inputs=conv23, pool_size=[2,2],
-                                            padding="SAME", strides=2)              # (?,7,7,64)  # (?,8,8,64)
+                                            padding="SAME", strides=2)              # (?,7,7,64)  # (?,8,8,64)16
             
             dropout2 = tf.layers.dropout(inputs=pool2,
                                          rate=0.7, training=self.training)
@@ -118,13 +118,13 @@ class Model:
                                      kernel_regularizer=self.kernel_regularizer)         # (?,15,15,256)
             
             pool3 = tf.layers.max_pooling2d(inputs=conv34, pool_size=[2,2],
-                                            padding="SAME", strides=2)              # (?,4,4,256)   # (?,4,4,256)
+                                            padding="SAME", strides=2)              # (?,4,4,256)   # (?,4,4,256)8
             
             dropout3 = tf.layers.dropout(inputs=pool3,
                                          rate=0.7, training=self.training)
             
             # Dense Layer with Relu ========================================================================
-            flat = tf.reshape(dropout3, [-1, 256*4*4])                              # 32-(?,4*4*128)  # 60-(?,8*8*128) 
+            flat = tf.reshape(dropout3, [-1, 256*8*8])                              # 32-(?,4*4*128)  # 60-(?,8*8*128) 
                               
             dense4 = tf.layers.dense(inputs=flat, units=1024, activation=tf.nn.relu, 
                                      kernel_initializer=tf.contrib.layers.xavier_initializer(),
@@ -287,12 +287,12 @@ if __name__ == '__main__':
     mode = int(input("1.training  |  2.accuracy test  |  3.Freeze a model  : "))
     
     dataPath = '../../../color_defect_galaxy/data/train_data'
-    color_type = 'Gray'  #  RGB   /  BGR   /   Lab   /   Gray
+    color_type = 'Lab'  #  RGB   /  BGR   /   Lab   /   Gray
     feature_type = 'block'  #  full   /   block
     withScatter = False
 
-    sample_size = [1000, 300]    
-    feature_shape = [32, 32, 3]
+    sample_size = [1000, 400]    
+    feature_shape = [64, 64, 3]
     
         
     if( color_type=='Gray'):
@@ -310,10 +310,10 @@ if __name__ == '__main__':
     label_size = 2                  # OK=[1 0] or NG=[0 1]
     learning_rate=1e-4
     
-    training_epochs = 200
+    training_epochs = 1000
     batch_size = 20
     nExtractPerImg = 50
-    nFakes = 0     # if you don't want to generate fake date, nFakes = 0
+    nFakes = 100     # if you don't want to generate fake date, nFakes = 0
     
     # Pre process
     if(mode==1 or mode==2):        	

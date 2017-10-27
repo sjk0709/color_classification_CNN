@@ -69,13 +69,13 @@ def im2double(img):
 def correct_FlatImg(img, kernel_size):
 
     # -- 1. Convert color image: BGR -> RGB
-#    fileImg_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)    
+    fileImg_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)    
     
     # -- 2. Split color image
     # b, g, r = cv2.split(fileImg_BGR)       # get b, g, r
     # fileImg_RGB = cv2.merge([r, g, b])     # merge to rgb
 
-    r, g, b = cv2.split(img)  # get r, g, b
+    r, g, b = cv2.split(fileImg_RGB)  # get r, g, b
 
     # cv2.imwrite('test1_r.bmp', r)
     # cv2.imwrite('test1_g.bmp', g)
@@ -150,6 +150,15 @@ def getSamples(path, width, height, color_type='RGB', feature_type='full'): # in
         croppedImg = image[y_start:y_end, x_start:x_end]    # Crop a image  
         sampleImg = imgPro.findSampleImage(croppedImg, width=width, height=height )  
           
+          #        cv2.imshow('image', sampleImg)
+#        cv2.waitKey(0)
+      
+        # plat
+        if (feature_type=='block'):             
+            kernel_size = 5   
+            sampleImg = correct_FlatImg(sampleImg, kernel_size=kernel_size)   # BGR
+        
+        # convert color
         if(color_type =='RGB'):
             sampleImg = cv2.cvtColor(sampleImg, cv2.COLOR_BGR2RGB)     # BGR -> RGB
         elif(color_type =='Lab'):
@@ -157,22 +166,10 @@ def getSamples(path, width, height, color_type='RGB', feature_type='full'): # in
         elif(color_type=='Gray'):
             sampleImg = cv2.cvtColor(sampleImg, cv2.COLOR_BGR2GRAY)     # BGR -> Gray
         
-#        cv2.imshow('image', sampleImg)
+        
+        #        cv2.imshow('image', sampleImg)
 #        cv2.waitKey(0)
-        
-        if (feature_type=='full'):
-            tempImg = sampleImg
-        else:
-            if(color_type =='BGR'):
-                sampleImg = cv2.cvtColor(sampleImg, cv2.COLOR_BGR2RGB)     # BGR -> RGB
-            elif(color_type =='Lab'):
-                sampleImg = cv2.cvtColor(sampleImg, cv2.COLOR_Lab2RGB)     # BGR -> Lab
-            elif(color_type =='Gray'):
-                sampleImg = cv2.cvtColor(sampleImg, cv2.COLOR_GRAY2RGB)     # BGR -> Lab
-            kernel_size = 5   
-            tempImg = correct_FlatImg(sampleImg, kernel_size=kernel_size)
-            
-        
+
         fileName = path_leaf(filepath)       
         
         label = 'Null'
@@ -183,7 +180,7 @@ def getSamples(path, width, height, color_type='RGB', feature_type='full'): # in
         elif (fileName.find('NG') != -1):
             label='NG'
             
-        imageList.append(tempImg)
+        imageList.append(sampleImg)
 #        fileNameList.append(fileName)
         labelList.append(label) 
 
